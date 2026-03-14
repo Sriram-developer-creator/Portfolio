@@ -1,0 +1,6 @@
+projectKey=mobile
+serverUrl=http://localhost:9000
+serverVersion=25.7.0.110598
+dashboardUrl=http://localhost:9000/dashboard?id=mobile
+ceTaskId=9fc0a045-7f11-4383-8e81-96319c44bb03
+ceTaskUrl=http://localhost:9000/api/ce/task?id=9fc0a045-7f11-4383-8e81-96319c44bb03
