@@ -1,4 +1,4 @@
-import { hover, motion } from "framer-motion"
+import { motion } from "framer-motion"
 import { useState } from "react"
 import { FaChevronDown } from "react-icons/fa"
 

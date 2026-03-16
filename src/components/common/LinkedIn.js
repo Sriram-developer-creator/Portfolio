@@ -8,7 +8,7 @@ export default function LinkedInPreview(){
 
   return (
 
-    <div
+    <button
       className="relative flex flex-col items-center p-6 cursor-pointer"
       onMouseEnter={()=>setHover(true)}
       onMouseLeave={()=>setHover(false)}
@@ -65,7 +65,7 @@ export default function LinkedInPreview(){
 
       </AnimatePresence>
 
-    </div>
+    </button>
 
   )
 

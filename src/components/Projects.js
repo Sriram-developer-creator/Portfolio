@@ -1,5 +1,4 @@
 import { motion } from "framer-motion"
-import { FaGithub, FaExternalLinkAlt } from "react-icons/fa"
 import UpcomingLockedProject from "./common/UpcomingLockedProject"
 
 const projects = [

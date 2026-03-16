@@ -1,18 +1,21 @@
 import { useState, useCallback } from "react"
 import { motion } from "framer-motion"
-import profile from "../assets/profile_pic.jpeg"
-import { FaLinkedin, FaEnvelope, FaFileAlt } from "react-icons/fa"
+import { FaLinkedin, FaEnvelope, FaFileAlt, FaArrowCircleRight } from "react-icons/fa"
 import { TypeAnimation } from "react-type-animation"
-import ContactModal from "./ContactModal"
-
 import Particles from "@tsparticles/react"
 import { loadSlim } from "tsparticles-slim"
+
+import profile from "../assets/profile_pic.jpeg"
+import ContactModal from "./ContactModal"
+import RecruiterQuickView from "./common/RecruiterQuickView"
+import NeuralNetworkEffect from "./common/NeuralNetworkEffect"
 
 export default function Hero() {
 
   const [open, setOpen] = useState(false)
   const [showPreview, setShowPreview] = useState(false)
-
+  const [recruiterView, setRecruiterView] = useState(false)
+  
   const particlesInit = useCallback(async (engine) => {
     await loadSlim(engine)
   }, [])
@@ -43,7 +46,45 @@ export default function Hero() {
 
     <section className="relative min-h-screen flex items-center justify-center bg-slate-900 text-white overflow-hidden px-6">
 
-      {/* PARTICLES BACKGROUND */}
+
+      {/* SQUARE GRID BACKGROUND */}
+
+      <div className="absolute inset-0 opacity-30">
+
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(34,211,238,0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(34,211,238,0.15) 1px, transparent 1px)",
+            backgroundSize: "60px 60px"
+          }}
+        />
+
+      </div>
+
+
+      {/* MOVING STAR GLOW */}
+
+      <motion.div
+        className="absolute w-[400px] h-[400px] rounded-full blur-[120px] pointer-events-none"
+        animate={{
+          x: ["-20%", "120%", "-20%"],
+          y: ["10%", "60%", "10%"]
+        }}
+        transition={{
+          duration: 5,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+        style={{
+          background:
+            "radial-gradient(circle, rgba(34,211,238,0.45) 0%, rgba(59,130,246,0.2) 40%, transparent 70%)"
+        }}
+      />
+
+      {/* <AstroEffect />  */}
+      <NeuralNetworkEffect />
+      {/* PARTICLES */}
 
       <Particles
         id="tsparticles"
@@ -91,6 +132,21 @@ export default function Hero() {
 
           <motion.div
             variants={item}
+            className="flex items-center gap-3 mb-4 justify-center md:justify-start"
+          >
+
+            <span className="px-3 py-1 text-xs rounded-full bg-green-500/20 border border-green-400 text-green-300">
+              Open to Opportunities
+            </span>
+
+            <span className="px-3 py-1 text-xs rounded-full bg-cyan-500/20 border border-cyan-400 text-cyan-300">
+              5+ Years Experience
+            </span>
+
+          </motion.div>
+
+          <motion.div
+            variants={item}
             className="text-lg sm:text-xl text-cyan-400 mb-3"
           >
 
@@ -133,8 +189,6 @@ export default function Hero() {
             className="flex flex-wrap justify-center md:justify-start gap-4 items-center"
           >
 
-            {/* CONTACT */}
-
             <motion.button
               whileHover={{ scale: 1.08 }}
               whileTap={{ scale: 0.95 }}
@@ -144,8 +198,6 @@ export default function Hero() {
               <FaEnvelope /> Contact
             </motion.button>
 
-
-            {/* LINKEDIN */}
 
             <motion.a
               whileHover={{ scale: 1.08 }}
@@ -170,16 +222,13 @@ export default function Hero() {
               <motion.a
                 whileHover={{ scale: 1.08 }}
                 whileTap={{ scale: 0.95 }}
-                href="/Sriram_S_Resume.pdf"
+                href={`${process.env.PUBLIC_URL}/Sriram_S_Resume.pdf`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 border border-cyan-500 px-6 py-3 rounded-lg hover:bg-cyan-500 transition"
               >
                 <FaFileAlt /> Resume
               </motion.a>
-
-
-              {/* RESUME PREVIEW */}
 
               {showPreview && (
                 <motion.div
@@ -194,7 +243,7 @@ export default function Hero() {
                   </p>
 
                   <iframe
-                    src="/Sriram_S_Resume.pdf"
+                    src={`${process.env.PUBLIC_URL}/Sriram_S_Resume.pdf`}
                     title="resume preview"
                     className="w-full h-44 rounded-md border border-slate-700"
                   />
@@ -203,6 +252,14 @@ export default function Hero() {
               )}
 
             </div>
+
+
+            <button
+              onClick={() => setRecruiterView(true)}
+              className="flex items-center gap-2 px-6 py-3 border border-purple-500 rounded-lg hover:bg-purple-500 transition"
+            >
+              <FaArrowCircleRight /> Recruiter Quick View
+            </button>
 
           </motion.div>
 
@@ -218,9 +275,7 @@ export default function Hero() {
           className="relative flex justify-center"
         >
 
-          {/* GLOW HALO */}
-
-          <div className="absolute w-80 h-80 rounded-full bg-gradient-to-r from-cyan-500 to-purple-500 blur-3xl opacity-30"/>
+          <div className="absolute w-80 h-80 rounded-full bg-gradient-to-r from-cyan-500 to-purple-500 blur-3xl opacity-30" />
 
           <motion.img
             src={profile}
@@ -229,9 +284,6 @@ export default function Hero() {
             animate={{ y: [0, -20, 0] }}
             transition={{ repeat: Infinity, duration: 4 }}
           />
-
-
-          {/* FLOATING TECH TAGS */}
 
           {tech.map((t, i) => (
             <motion.div
@@ -257,8 +309,6 @@ export default function Hero() {
       </div>
 
 
-      {/* SCROLL INDICATOR */}
-
       <motion.div
         animate={{ y: [0, 12, 0] }}
         transition={{ repeat: Infinity, duration: 1.4 }}
@@ -268,6 +318,11 @@ export default function Hero() {
       </motion.div>
 
       <ContactModal open={open} setOpen={setOpen} />
+
+      <RecruiterQuickView
+        open={recruiterView}
+        setOpen={setRecruiterView}
+      />
 
     </section>
   )
