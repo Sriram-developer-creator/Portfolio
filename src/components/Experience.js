@@ -1,195 +1,157 @@
-import { motion } from "framer-motion"
-import { useState } from "react"
-import { FaChevronDown } from "react-icons/fa"
+import {
+  motion,
+  useMotionValue,
+  useTransform,
+  useSpring,
+  useScroll
+} from "framer-motion"
+import { useRef, useState } from "react"
+import { experiences } from "./common/Constant"
 
-function ExperienceCard({ data }) {
+function MagneticCard({ children }) {
+  const ref = useRef(null)
 
-  const [open, setOpen] = useState(false)
-  const [hover, setHover] = useState(false)
+  const x = useMotionValue(0)
+  const y = useMotionValue(0)
+
+  const springX = useSpring(x, { stiffness: 150, damping: 12 })
+  const springY = useSpring(y, { stiffness: 150, damping: 12 })
+
+  const handleMouseMove = (e) => {
+    const rect = ref.current.getBoundingClientRect()
+    const centerX = rect.left + rect.width / 2
+    const centerY = rect.top + rect.height / 2
+
+    const deltaX = (e.clientX - centerX) * 0.15
+    const deltaY = (e.clientY - centerY) * 0.15
+
+    x.set(deltaX)
+    y.set(deltaY)
+  }
+
+  const reset = () => {
+    x.set(0)
+    y.set(0)
+  }
 
   return (
-
     <motion.div
-      onHoverStart={() => setHover(true)}
-      onHoverEnd={() => setHover(false)}
-
-      /* subtle breathing animation */
-      animate={{ scale: [1, 1.01, 1] }}
-      transition={{
-        duration: 3,
-        repeat: Infinity,
-        ease: "easeInOut"
-      }}
-
-      whileHover={{ scale: 1.03 }}
-
-      className="bg-slate-800 rounded-xl p-6 shadow-xl border border-slate-700 overflow-hidden"
+      ref={ref}
+      style={{ x: springX, y: springY }}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={reset}
     >
+      {children}
+    </motion.div>
+  )
+}
 
-      {/* HEADER */}
+function ExperienceCard({ data, index, active, setActive }) {
 
-      <div className="flex justify-between items-start">
+  return (
+    <MagneticCard>
+      <motion.div
+        onMouseEnter={() => setActive(index)}
+        onMouseLeave={() => setActive(null)}
 
-        <div>
-
-          <h3 className="text-lg md:text-xl font-semibold text-white">
-            {data.role}
-          </h3>
-
-          <p className="text-cyan-400">
-            {data.company}
-          </p>
-
-        </div>
-
-        <span className="text-gray-400 text-sm">
-          {data.duration}
-        </span>
-
-      </div>
-
-      {/* TECH */}
-
-      <p className="text-gray-400 text-sm mt-2">
-        Tech: {data.tech}
-      </p>
-
-      {/* MOBILE INTERACTION */}
-
-      <div
-        onClick={() => setOpen(!open)}
-        className="flex md:hidden items-center gap-2 text-cyan-400 text-sm mt-4 cursor-pointer"
+        className="relative p-[1px] rounded-2xl"
       >
 
-        Tap to view details
+        {/* GLOW BORDER */}
+        <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-cyan-500/30 via-purple-500/20 to-transparent blur-xl opacity-0 group-hover:opacity-100 transition duration-500" />
 
+        {/* GLASS CARD */}
         <motion.div
-          animate={{ y: [0, 6, 0] }}
-          transition={{
-            duration: 1.2,
-            repeat: Infinity,
-            ease: "easeInOut"
+          className="relative backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl p-6"
+          animate={{
+            scale: active === index ? 1.03 : 1,
+            opacity: active === null || active === index ? 1 : 0.4
           }}
+          transition={{ duration: 0.4 }}
         >
 
-          <FaChevronDown
-            className={`transition-transform duration-300 ${
-              open ? "rotate-180" : ""
-            }`}
-          />
+          <h3 className="text-2xl font-semibold">{data.role}</h3>
+          <p className="text-white/60">{data.company}</p>
+          <p className="text-white/40 text-sm mt-1">{data.duration}</p>
 
+          <p className="text-white/40 mt-3 text-sm">{data.tech}</p>
+
+          <motion.ul
+            initial={false}
+            animate={{
+              opacity: active === index ? 1 : 0,
+              height: active === index ? "auto" : 0
+            }}
+            className="overflow-hidden mt-4 space-y-2 text-white/70 text-sm"
+          >
+            {data.points.map((p, i) => (
+              <li key={i}>• {p}</li>
+            ))}
+          </motion.ul>
+
+        </motion.div>
+
+      </motion.div>
+    </MagneticCard>
+  )
+}
+
+export default function Experience() {
+
+  const [active, setActive] = useState(null)
+  const ref = useRef(null)
+
+  /* PARALLAX */
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"]
+  })
+
+  const yBg = useTransform(scrollYProgress, [0, 1], ["-20%", "20%"])
+  const yCards = useTransform(scrollYProgress, [0, 1], ["0%", "-10%"])
+
+  return (
+    <section
+      ref={ref}
+      className="relative bg-black text-white py-32 overflow-hidden"
+    >
+
+      {/* PARALLAX BACKGROUND */}
+      <motion.div
+        style={{ y: yBg }}
+        className="absolute inset-0 bg-gradient-to-b from-cyan-500/10 via-transparent to-transparent blur-[200px]"
+      />
+
+      <div className="max-w-5xl mx-auto px-6">
+
+        {/* TITLE ANIMATION */}
+        <motion.h2
+          initial={{ opacity: 0, y: 60 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="text-5xl font-semibold mb-20 tracking-tight"
+        >
+          Experience
+        </motion.h2>
+
+        {/* PARALLAX CARD WRAPPER */}
+        <motion.div
+          style={{ y: yCards }}
+          className="space-y-12"
+        >
+          {experiences.map((exp, i) => (
+            <ExperienceCard
+              key={i}
+              data={exp}
+              index={i}
+              active={active}
+              setActive={setActive}
+            />
+          ))}
         </motion.div>
 
       </div>
 
-      {/* DESCRIPTION */}
-
-      <motion.ul
-        initial={false}
-        animate={{
-          height: open || hover ? "auto" : 40
-        }}
-        transition={{ duration: 0.35 }}
-        className="overflow-hidden text-gray-300 text-sm space-y-2 mt-3"
-      >
-
-        {data.points.map((p, i) => (
-          <li key={i}>– {p}</li>
-        ))}
-
-      </motion.ul>
-
-    </motion.div>
-
-  )
-}
-
-export default function Experience(){
-
-  const experiences = [
-
-    {
-      role:"Senior Software Engineer (React / React Native / Full Stack)",
-      company:"Mphasis",
-      duration:"Jul 2025 – Present",
-      tech:"React Native, TypeScript, Firebase Auth, Cloud Functions, SonarQube",
-      points:[
-        "Led development of scalable React Native features for the DELV digital platform.",
-        "Implemented secure authentication using Firebase Auth and Cloud Functions.",
-        "Integrated SonarQube to monitor code quality and technical debt.",
-        "Introduced Cursor AI workflows improving development productivity by 50%.",
-        "Designed modular component architecture improving development scalability."
-      ]
-    },
-
-    {
-      role:"Software Engineer (React / React Native / Full Stack)",
-      company:"HST Global",
-      duration:"Feb 2023 – Jul 2025",
-      tech:"React, React Native, TypeScript, REST APIs, ARIA",
-      points:[
-        "Architected scalable React Native project structure.",
-        "Developed telemedicine features including authentication and payment flows.",
-        "Optimized component rendering and API integration improving performance."
-      ]
-    },
-
-    {
-      role:"Software Engineer",
-      company:"Emproto Technologies",
-      duration:"Jun 2021 – Feb 2023",
-      tech:"React, TypeScript, GraphQL, Redux, Chart.js, Material UI",
-      points:[
-        "Built financial dashboards using React and Chart.js.",
-        "Implemented GraphQL integrations and Redux state management.",
-        "Developed reusable UI components for e-commerce platform.",
-        "Integrated REST APIs for catalog and order workflows.",
-        "Implemented secure checkout and payment systems."
-      ]
-    }
-
-  ]
-
-  return (
-
-    <section id="experience" className="bg-slate-900 py-24 text-white">
-
-      <div className="max-w-6xl mx-auto px-6">
-
-        <h2 className="text-4xl font-bold text-center mb-20">
-          Experience
-        </h2>
-
-        <div className="relative">
-
-          {/* TIMELINE LINE */}
-
-          <div className="absolute left-4 top-0 h-full w-1 bg-cyan-500 opacity-30"/>
-
-          <div className="space-y-12">
-
-            {experiences.map((exp,i)=>(
-
-              <div key={i} className="relative pl-12">
-
-                {/* DOT */}
-
-                <div className="absolute left-0 top-6 w-8 h-8 rounded-full bg-cyan-500"/>
-
-                <ExperienceCard data={exp}/>
-
-              </div>
-
-            ))}
-
-          </div>
-
-        </div>
-
-      </div>
-
     </section>
-
   )
-
 }

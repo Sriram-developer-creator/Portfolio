@@ -1,328 +1,191 @@
-import { useState, useCallback } from "react"
+import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
-import { FaLinkedin, FaEnvelope, FaFileAlt, FaArrowCircleRight } from "react-icons/fa"
-import { TypeAnimation } from "react-type-animation"
-import Particles from "@tsparticles/react"
-import { loadSlim } from "tsparticles-slim"
+import {
+  FaLinkedin,
+  FaEnvelope,
+  FaFileAlt,
+  FaArrowCircleRight
+} from "react-icons/fa"
 
-import profile from "../assets/profile_pic.jpeg"
 import ContactModal from "./ContactModal"
 import RecruiterQuickView from "./common/RecruiterQuickView"
-import NeuralNetworkEffect from "./common/NeuralNetworkEffect"
+
+const logs = [
+  "Initializing frontend systems...",
+  "Loading React runtime...",
+  "Connecting to scalable architecture...",
+  "Optimizing performance pipelines...",
+  "Deploying high-quality UI components...",
+  "System ready."
+]
 
 export default function Hero() {
 
   const [open, setOpen] = useState(false)
-  const [showPreview, setShowPreview] = useState(false)
   const [recruiterView, setRecruiterView] = useState(false)
-  
-  const particlesInit = useCallback(async (engine) => {
-    await loadSlim(engine)
+  const [visibleLogs, setVisibleLogs] = useState([])
+  const [showPreview, setShowPreview] = useState(false)
+
+  useEffect(() => {
+    let index = 0
+    let interval
+
+    const startLogs = () => {
+      interval = setInterval(() => {
+
+        setVisibleLogs((prev) => {
+          if (index < logs.length) {
+            return [...prev, logs[index]]
+          }
+          return prev
+        })
+
+        index++
+
+        // when finished → reset cleanly
+        if (index > logs.length) {
+          clearInterval(interval)
+
+          setTimeout(() => {
+            index = 0
+            setVisibleLogs([])
+            startLogs() // restart loop safely
+          }, 1200)
+        }
+
+      }, 600)
+    }
+
+    startLogs()
+
+    return () => clearInterval(interval)
+
   }, [])
 
-  const tech = [
-    "React",
-    "TypeScript",
-    "Next.js",
-    "Node.js",
-    "Redux",
-    "React Native"
-  ]
-
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: { staggerChildren: 0.2 }
-    }
-  }
-
-  const item = {
-    hidden: { opacity: 0, y: 40 },
-    show: { opacity: 1, y: 0 }
-  }
-
   return (
+    <section className="min-h-screen bg-black text-white flex items-center justify-center px-6">
 
-    <section className="relative min-h-screen flex items-center justify-center bg-slate-900 text-white overflow-hidden px-6">
+      <div className="max-w-3xl w-full">
 
-
-      {/* SQUARE GRID BACKGROUND */}
-
-      <div className="absolute inset-0 opacity-30">
-
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage:
-              "linear-gradient(rgba(34,211,238,0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(34,211,238,0.15) 1px, transparent 1px)",
-            backgroundSize: "60px 60px"
-          }}
-        />
-
-      </div>
-
-
-      {/* MOVING STAR GLOW */}
-
-      <motion.div
-        className="absolute w-[400px] h-[400px] rounded-full blur-[120px] pointer-events-none"
-        animate={{
-          x: ["-20%", "120%", "-20%"],
-          y: ["10%", "60%", "10%"]
-        }}
-        transition={{
-          duration: 5,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-        style={{
-          background:
-            "radial-gradient(circle, rgba(34,211,238,0.45) 0%, rgba(59,130,246,0.2) 40%, transparent 70%)"
-        }}
-      />
-
-      {/* <AstroEffect />  */}
-      <NeuralNetworkEffect />
-      {/* PARTICLES */}
-
-      <Particles
-        id="tsparticles"
-        init={particlesInit}
-        className="absolute inset-0"
-        options={{
-          background: { color: "transparent" },
-          particles: {
-            number: { value: 40 },
-            color: { value: "#22d3ee" },
-            links: {
-              enable: true,
-              distance: 150,
-              color: "#22d3ee",
-              opacity: 0.2,
-              width: 1
-            },
-            move: {
-              enable: true,
-              speed: 1
-            },
-            size: { value: 2 },
-            opacity: { value: 0.3 }
-          }
-        }}
-      />
-
-      <div className="max-w-7xl w-full grid md:grid-cols-2 gap-12 items-center z-10">
-
-        {/* LEFT SIDE */}
-
+        {/* HEADER */}
         <motion.div
-          variants={container}
-          initial="hidden"
-          animate="show"
-          className="text-center md:text-left"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-10"
         >
+          <h1 className="text-4xl md:text-5xl font-semibold tracking-tight">
+            Sriram Selvaraj
+          </h1>
 
-          <motion.h1
-            variants={item}
-            className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 bg-clip-text text-transparent"
-          >
-            Sriram S
-          </motion.h1>
-
-          <motion.div
-            variants={item}
-            className="flex items-center gap-3 mb-4 justify-center md:justify-start"
-          >
-
-            <span className="px-3 py-1 text-xs rounded-full bg-green-500/20 border border-green-400 text-green-300">
-              Open to Opportunities
-            </span>
-
-            <span className="px-3 py-1 text-xs rounded-full bg-cyan-500/20 border border-cyan-400 text-cyan-300">
-              5+ Years Experience
-            </span>
-
-          </motion.div>
-
-          <motion.div
-            variants={item}
-            className="text-lg sm:text-xl text-cyan-400 mb-3"
-          >
-
-            <TypeAnimation
-              sequence={[
-                "Senior Software Engineer",
-                2000,
-                "React / React Native Developer",
-                2000,
-                "Frontend Engineer",
-                2000,
-                "Full Stack Developer",
-                2000
-              ]}
-              speed={50}
-              repeat={Infinity}
-            />
-
-          </motion.div>
-
-          <motion.p
-            variants={item}
-            className="text-gray-400 mb-4"
-          >
-            React • React Native • TypeScript • JavaScript
-          </motion.p>
-
-          <motion.p
-            variants={item}
-            className="text-gray-300 mb-8 leading-relaxed max-w-xl mx-auto md:mx-0"
-          >
-            Senior Software Engineer with 5+ years of experience building scalable web and mobile applications using React, React Native and Node.js.
-          </motion.p>
-
-
-          {/* BUTTONS */}
-
-          <motion.div
-            variants={item}
-            className="flex flex-wrap justify-center md:justify-start gap-4 items-center"
-          >
-
-            <motion.button
-              whileHover={{ scale: 1.08 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setOpen(true)}
-              className="flex items-center gap-2 bg-cyan-500 px-6 py-3 rounded-lg hover:bg-cyan-400 transition"
-            >
-              <FaEnvelope /> Contact
-            </motion.button>
-
-
-            <motion.a
-              whileHover={{ scale: 1.08 }}
-              whileTap={{ scale: 0.95 }}
-              href="https://www.linkedin.com/in/sriram-selvaraj-28303b228/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 border border-cyan-500 px-6 py-3 rounded-lg hover:bg-cyan-500 transition"
-            >
-              <FaLinkedin /> LinkedIn
-            </motion.a>
-
-
-            {/* RESUME */}
-
-            <div
-              className="relative flex items-center"
-              onMouseEnter={() => setShowPreview(true)}
-              onMouseLeave={() => setShowPreview(false)}
-            >
-
-              <motion.a
-                whileHover={{ scale: 1.08 }}
-                whileTap={{ scale: 0.95 }}
-                href={`${process.env.PUBLIC_URL}/Sriram_S_Resume.pdf`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 border border-cyan-500 px-6 py-3 rounded-lg hover:bg-cyan-500 transition"
-              >
-                <FaFileAlt /> Resume
-              </motion.a>
-
-              {showPreview && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  transition={{ duration: 0.25 }}
-                  className="absolute left-full ml-4 top-0 w-72 backdrop-blur-lg bg-white/5 rounded-xl shadow-2xl border border-white/10 p-3 z-50"
-                >
-
-                  <p className="text-xs text-gray-400 mb-2">
-                    Resume Preview
-                  </p>
-
-                  <iframe
-                    src={`${process.env.PUBLIC_URL}/Sriram_S_Resume.pdf`}
-                    title="resume preview"
-                    className="w-full h-44 rounded-md border border-slate-700"
-                  />
-
-                </motion.div>
-              )}
-
-            </div>
-
-
-            <button
-              onClick={() => setRecruiterView(true)}
-              className="flex items-center gap-2 px-6 py-3 border border-purple-500 rounded-lg hover:bg-purple-500 transition"
-            >
-              <FaArrowCircleRight /> Recruiter Quick View
-            </button>
-
-          </motion.div>
-
+          <p className="text-cyan-400 text-sm mt-2">
+            status: active • role: Senior Software Engineer
+          </p>
         </motion.div>
 
+        {/* TERMINAL */}
+        <div className="bg-[#0b0b0b] border border-white/10 rounded-xl p-6 font-mono text-sm h-[220px] overflow-hidden">
 
-        {/* RIGHT SIDE IMAGE */}
-
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1 }}
-          className="relative flex justify-center"
-        >
-
-          <div className="absolute w-80 h-80 rounded-full bg-gradient-to-r from-cyan-500 to-purple-500 blur-3xl opacity-30" />
-
-          <motion.img
-            src={profile}
-            alt="profile"
-            className="relative w-56 sm:w-64 md:w-72 lg:w-80 rounded-xl shadow-2xl"
-            animate={{ y: [0, -20, 0] }}
-            transition={{ repeat: Infinity, duration: 4 }}
-          />
-
-          {tech.map((t, i) => (
+          {visibleLogs.map((log, i) => (
             <motion.div
               key={i}
-              animate={{ y: [0, -10, 0] }}
-              transition={{
-                repeat: Infinity,
-                duration: 3,
-                delay: i * 0.3
-              }}
-              className="absolute bg-slate-800 border border-cyan-400 text-xs px-3 py-1 rounded-full shadow-lg"
-              style={{
-                top: `${15 + i * 10}%`,
-                left: i % 2 ? "-30px" : "90%"
-              }}
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+              className="text-white/70 mb-2"
             >
-              {t}
+              <span className="text-cyan-400 mr-2">›</span>
+              {log}
             </motion.div>
           ))}
 
-        </motion.div>
+        </div>
+
+        {/* METRICS */}
+        <div className="flex gap-6 mt-10 text-sm">
+
+          <div>
+            <p className="text-cyan-400 text-lg font-semibold">5+</p>
+            <p className="text-white/50">Years</p>
+          </div>
+
+          <div>
+            <p className="text-cyan-400 text-lg font-semibold">10+</p>
+            <p className="text-white/50">Projects</p>
+          </div>
+
+          <div>
+            <p className="text-cyan-400 text-lg font-semibold">50%</p>
+            <p className="text-white/50">Productivity</p>
+          </div>
+
+        </div>
+
+        {/* ACTIONS */}
+        <div className="flex gap-4 mt-10 flex-wrap items-center">
+
+          <button
+            onClick={() => setOpen(true)}
+            className="px-5 py-2 border border-cyan-400 text-cyan-400 rounded-md hover:bg-cyan-400 hover:text-black transition"
+          >
+            <FaEnvelope className="inline mr-2" />
+            Contact
+          </button>
+
+          <a
+            href="https://www.linkedin.com/in/sriram-selvaraj-28303b228/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-5 py-2 border border-white/20 rounded-md hover:bg-white/10 transition"
+          >
+            <FaLinkedin className="inline mr-2" />
+            LinkedIn
+          </a>
+
+          {/* RESUME WITH PREVIEW */}
+          <div
+            className="relative"
+            onMouseEnter={() => setShowPreview(true)}
+            onMouseLeave={() => setShowPreview(false)}
+          >
+            <a
+              href={`${process.env.PUBLIC_URL}/Sriram_S_Resume.pdf`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-5 py-2 border border-white/20 rounded-md hover:bg-white/10 transition"
+            >
+              <FaFileAlt className="inline mr-2" />
+              Resume
+            </a>
+
+            {showPreview && (
+              <motion.div
+                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                className="absolute left-full ml-4 top-0 w-72 bg-black border border-white/10 rounded-lg p-2 shadow-xl"
+              >
+                <iframe
+                  src={`${process.env.PUBLIC_URL}/Sriram_S_Resume.pdf`}
+                  className="w-full h-40 rounded"
+                  title="resume preview"
+                />
+              </motion.div>
+            )}
+          </div>
+
+          <button
+            onClick={() => setRecruiterView(true)}
+            className="px-5 py-2 border border-purple-500 text-purple-400 rounded-md hover:bg-purple-500 hover:text-white transition"
+          >
+            <FaArrowCircleRight className="inline mr-2" />
+            Quick View
+          </button>
+
+        </div>
 
       </div>
 
-
-      <motion.div
-        animate={{ y: [0, 12, 0] }}
-        transition={{ repeat: Infinity, duration: 1.4 }}
-        className="absolute bottom-10 text-gray-400 text-xl"
-      >
-        ↓
-      </motion.div>
-
       <ContactModal open={open} setOpen={setOpen} />
-
-      <RecruiterQuickView
-        open={recruiterView}
-        setOpen={setRecruiterView}
-      />
+      <RecruiterQuickView open={recruiterView} setOpen={setRecruiterView} />
 
     </section>
   )
